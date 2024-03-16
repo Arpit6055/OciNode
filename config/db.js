@@ -1,29 +1,27 @@
 const oracledb = require('oracledb');
 require('dotenv').config()
 
-process.env.TNS_ADMIN = '/Wallet_QuantumDB';
+const config = {
+    user: process.env.user,
+    password: process.env.password,
+    connectString: '(description= (retry_count=1)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-mumbai-1.oraclecloud.com))(connect_data=(service_name=gd293a7f3373c76_quantumdb_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))',
+  };  
 
-async function connectToADB() {
+async function connect() {
     try {
-        // Set up Oracle Instant Client
-        // await oracledb.initOracleClient({ libDir: `C:\instantclient_21_13` });
-
-        // Set up database connection
-        console.log({           user: process.env.user, password: process.env.password,});
-        const connection = await oracledb.getConnection({
-            user: process.env.user,
-            password: process.env.password,
-            connectString: 'quantumdb_tpurgent',
-            // walletLocation: `./Wallet_QuantumDB_copy`,
-        });
-
-        console.log('Connected to Oracle Autonomous Database');
-
-        // Release the connection
-        await connection.close();
-    } catch (error) {
-        console.error('Error: ', error);
+        console.log("trying to connect to DB");
+      const connection = await oracledb.getConnection(config);
+      console.log('Connected to Autonomous Database!');
+  
+      // Execute your SQL queries here
+      const result = await connection.execute('SELECT * FROM users');
+      console.log(result.rows);
+  
+      await connection.close();
+    } catch (err) {
+      console.error('Error connecting:', err);
     }
-}
-
-connectToADB();
+  }
+  
+  connect();
+  
