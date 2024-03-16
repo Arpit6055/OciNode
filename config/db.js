@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+require('dotenv').config()
 
 process.env.TNS_ADMIN = '/Wallet_QuantumDB';
 
@@ -8,12 +9,12 @@ async function connectToADB() {
         // await oracledb.initOracleClient({ libDir: `C:\instantclient_21_13` });
 
         // Set up database connection
+        console.log({           user: process.env.user, password: process.env.password,});
         const connection = await oracledb.getConnection({
-            user: env.user,
-            password: env.pwd,
-            connectString: '(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-mumbai-1.oraclecloud.com))(connect_data=(service_name=gd293a7f3373c76_quantumdb_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))',
-            // // Specify wallet location
-            walletLocation: `/Users/Arpit singh/Downloads/Wallet_QuantumDB`,
+            user: process.env.user,
+            password: process.env.password,
+            connectString: 'quantumdb_tpurgent',
+            // walletLocation: `./Wallet_QuantumDB_copy`,
         });
 
         console.log('Connected to Oracle Autonomous Database');

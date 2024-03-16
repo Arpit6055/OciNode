@@ -3,3 +3,4 @@ node_modules/
 package-lock.json
 file:/*
 .env
+Wallet_QuantumDB_copy
