@@ -22,6 +22,7 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
+        working-directory: /node_copy
         node-version: ${{ matrix.node-version }}
     - run: npm i
     - run: touch .env
