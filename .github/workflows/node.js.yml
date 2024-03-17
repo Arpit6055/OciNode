@@ -24,7 +24,6 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
-        working-directory: /node_copy
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: touch .env
@@ -36,4 +35,3 @@ jobs:
               docker stop node-express-getting-started
           fi
     - run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
-        
