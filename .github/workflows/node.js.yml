@@ -31,5 +31,6 @@ jobs:
     - run:  echo "${{secrets.PROD_ENV}}" > .env
     - run: hostname -i
     - run: npm test
-    - run:  npm start
+    - run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
+    - run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
         
