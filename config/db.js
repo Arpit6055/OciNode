@@ -9,6 +9,8 @@ const config = {
   poolMin: 1,
 };
 
+console.log(config);
+
 let pool;
 
 async function createPool() {
