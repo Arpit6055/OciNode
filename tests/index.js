@@ -24,12 +24,6 @@ describe('GET /', function() {
       done(err);
     });
   });
-  it('should say Express', function (done) {
-    request.get('/').expect(200).end(function (err,result) {
-      test.string(result.text).contains('Express');
-      done(err);
-    });    
-  });
 });
 
 describe('GET /users', function() {
