@@ -28,20 +28,27 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      # Check if the branch is not 'demo', then execute npm ci and npm test
-      - name: Check branch and run npm ci and npm test
-        if: github.ref != 'refs/heads/demo'
+      # Create .env file and pipe secret into it
+      - name: Create .env file and add secret
         run: |
-          npm ci
-          npm test
+          touch .env
+          echo "${{ secrets.PROD_ENV }}" > .env
 
-      # For other branches, including 'demo', skip npm ci and npm test
-      - name: Skip npm ci and npm test for demo branch
-        if: github.ref == 'refs/heads/demo'
-        run: echo "Skipping npm ci and npm test for the demo branch"
+      # Run npm ci
+      - name: Install dependencies
+        if: github.ref != 'refs/heads/dev' # Only run npm ci if not on the 'dev' branch
+        run: npm ci
 
-      - run: touch .env
-      - run: echo "${{secrets.PROD_ENV}}" > .env
+      # Run npm test
+      - name: Run tests
+        if: github.ref != 'refs/heads/dev' # Only run npm test if not on the 'dev' branch
+        run: npm test
+
+      # For other branches, including 'dev', skip npm ci and npm test
+      - name: Skip npm ci and npm test for dev branch
+        if: github.ref == 'refs/heads/dev'
+        run: echo "Skipping npm ci and npm test for the dev branch"
+
       - run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
       - run: |
           if [ "$(docker ps -q -f name=node-express-getting-started)" ]; then
