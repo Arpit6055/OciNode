@@ -7,6 +7,7 @@ const config = {
   connectString: process.env.db_string,
   poolMax: 5,
   poolMin: 1,
+  poolAlias: "nodepool"
 };
 
 console.log(config);
@@ -28,7 +29,7 @@ async function getConnection() {
     if (!pool) {
       await createPool();
     }
-    const connection = await pool.getConnection();
+    const connection = await oracledb.getConnection("nodepool");
     return connection;
   } catch (err) {
     console.error('Error getting connection:', err);
