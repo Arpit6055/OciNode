@@ -45,7 +45,7 @@ body {
 
 .hero__title {
   font-size: 3rem;
-  margin-bottom: 4rem;
+  margin-bottom: 20%;
   text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5); /* Add text shadow for depth */
   color: red;
 }
@@ -125,4 +125,23 @@ textarea.form-control {
   color: #fff;
   text-align: center;
   padding: 20px 0;
+}
+
+/* Media queries for smaller screens */
+@media only screen and (max-width: 768px) {
+  .hero__title {
+    font-size: 36px;
+  }
+
+  .service-card {
+    padding: 15px;
+  }
+
+  .service-card__title {
+    font-size: 20px;
+  }
+
+  .service-card__description {
+    font-size: 16px;
+  }
 }
