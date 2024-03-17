@@ -27,6 +27,7 @@ jobs:
     - run: npm i
     - run: touch .env
     - run:  echo "${{secrets.PROD_ENV}}" > .env
+    - run: export LD_LIBRARY_PATH="/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH"
     - run: export TNS_ADMIN="/actions-runner/_work/instantclient_19_8/network/admin"
     - run: npm test
     - run:  npm start
