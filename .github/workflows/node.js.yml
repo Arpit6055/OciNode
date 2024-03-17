@@ -1,11 +1,10 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: Node.js CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - dev
 
 jobs:
   build:
@@ -15,23 +14,37 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - run: export TNS_ADMIN=/actions-runner/_work/instantclient_19_8/network/admin
-    - run: export LD_LIBRARY_PATH=/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: touch .env
-    - run:  echo "${{secrets.PROD_ENV}}" > .env
-    - run: npm test
-    - run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
-    - run: |
+      - name: Set up environment variables
+        run: |
+          export TNS_ADMIN=/actions-runner/_work/instantclient_19_8/network/admin
+          export LD_LIBRARY_PATH=/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH
+
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Check if the branch is not 'demo', then execute npm ci and npm test
+      - name: Check branch and run npm ci and npm test
+        if: github.ref != 'refs/heads/demo'
+        run: |
+          npm ci
+          npm test
+
+      # For other branches, including 'demo', skip npm ci and npm test
+      - name: Skip npm ci and npm test for demo branch
+        if: github.ref == 'refs/heads/demo'
+        run: echo "Skipping npm ci and npm test for the demo branch"
+
+      - run: touch .env
+      - run: echo "${{secrets.PROD_ENV}}" > .env
+      - run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
+      - run: |
           if [ "$(docker ps -q -f name=node-express-getting-started)" ]; then
               docker stop node-express-getting-started
           fi
-    - run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
+      - run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
