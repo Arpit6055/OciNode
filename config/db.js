@@ -17,6 +17,10 @@ async function createPool() {
   try {
     pool = await oracledb.createPool(config);
     console.log('Connection pool created successfully!');
+    const connection = await pool.getConnection();
+    const results = await connection.execute("select * from users");
+    console.log(results.rows);
+    return connection;
   } catch (err) {
     console.error('Error creating pool:', err);
     throw err;
