@@ -1,14 +1,13 @@
-FROM node:12-alpine
-
+FROM node
 
 WORKDIR /usr/src/node-getting-started
 
 COPY package*.json ./
 
-RUN npm i
+RUN npm install
 
 # Bundle app source
 COPY . .
 
 EXPOSE 3000
-CMD [ "node", "./bin/www" ]
+CMD [ "npm", "start" ]

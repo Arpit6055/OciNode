@@ -5,11 +5,11 @@ const config = {
   user: process.env.user,
   password: process.env.password,
   connectString: process.env.db_string,
-  poolMax: 5, // Adjust pool size as needed (default is 4)
-  poolMin: 1, // Adjust pool minimum (default is 0)
+  poolMax: 5,
+  poolMin: 1,
 };
 
-let pool; // Declare pool variable outside the function
+let pool;
 
 async function createPool() {
   try {
@@ -18,21 +18,21 @@ async function createPool() {
     console.log('Connection pool created successfully!');
   } catch (err) {
     console.error('Error creating pool:', err);
-    throw err; // Re-throw for proper handling
+    throw err;
   }
 }
 
 async function getConnection() {
   try {
     if (!pool) {
-      await createPool(); // Create pool if it doesn't exist
+      await createPool();
     }
     const connection = await pool.getConnection();
     console.log('Obtained connection from pool.');
     return connection;
   } catch (err) {
     console.error('Error getting connection:', err);
-    throw err; // Re-throw for proper handling
+    throw err;
   }
 }
 
@@ -45,8 +45,26 @@ async function releaseConnection(connection) {
   }
 }
 
-// Export the necessary functions
+async function executeQuery(sql, binds = [], options = {}) {
+  let connection;
+  try {
+    connection = await getConnection();
+    console.log('Executing query...');
+    const result = await connection.execute(sql, binds, options);
+    console.log('Query executed successfully!');
+    return result;
+  } catch (err) {
+    console.error('Error executing query:', err);
+    throw err;
+  } finally {
+    if (connection) {
+      releaseConnection(connection);
+    }
+  }
+}
+
 module.exports = {
   getConnection,
   releaseConnection,
+  executeQuery,
 };
