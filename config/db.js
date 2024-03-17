@@ -5,34 +5,48 @@ const config = {
   user: process.env.user,
   password: process.env.password,
   connectString: process.env.db_string,
+  poolMax: 5, // Adjust pool size as needed (default is 4)
+  poolMin: 1, // Adjust pool minimum (default is 0)
 };
 
-async function connectToDatabase() {
-  try {
-    console.log("Trying to connect to DB");
-    const connection = await oracledb.getConnection(config);
-    console.log('Connected to Autonomous Database!');
+let pool; // Declare pool variable outside the function
 
-    // Return a promise that resolves with a wrapped connection object
-    return new Promise((resolve, reject) => {
-      resolve({
-        connection,
-        close: async () => {
-          try {
-            await connection.close();
-            console.log('Connection closed successfully.');
-          } catch (err) {
-            console.error('Error closing connection:', err);
-            reject(err); // Propagate the error if closing fails
-          }
-        },
-      });
-    });
+async function createPool() {
+  try {
+    console.log('Creating connection pool...');
+    pool = await oracledb.createPool(config);
+    console.log('Connection pool created successfully!');
   } catch (err) {
-    console.error('Error connecting:', err);
-    throw err; // Re-throw the error for proper handling
+    console.error('Error creating pool:', err);
+    throw err; // Re-throw for proper handling
   }
 }
 
-// Export the connectToDatabase function
-module.exports = {connectToDatabase};
+async function getConnection() {
+  try {
+    if (!pool) {
+      await createPool(); // Create pool if it doesn't exist
+    }
+    const connection = await pool.getConnection();
+    console.log('Obtained connection from pool.');
+    return connection;
+  } catch (err) {
+    console.error('Error getting connection:', err);
+    throw err; // Re-throw for proper handling
+  }
+}
+
+async function releaseConnection(connection) {
+  try {
+    console.log('Releasing connection back to pool.');
+    await connection.release();
+  } catch (err) {
+    console.error('Error releasing connection:', err);
+  }
+}
+
+// Export the necessary functions
+module.exports = {
+  getConnection,
+  releaseConnection,
+};
