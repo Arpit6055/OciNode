@@ -10,8 +10,6 @@ const config = {
   poolAlias: "nodepool"
 };
 
-console.log(config);
-
 let pool;
 
 async function createPool() {
