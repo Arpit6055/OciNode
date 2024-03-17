@@ -29,7 +29,6 @@ jobs:
     - run: npm i
     - run: touch .env
     - run:  echo "${{secrets.PROD_ENV}}" > .env
-    - run: export TNS_ADMIN=""
     - run: hostname -i
     - run: npm test
     - run:  npm start
