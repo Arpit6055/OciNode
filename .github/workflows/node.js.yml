@@ -36,18 +36,18 @@ jobs:
 
       # Run npm ci
       - name: Install dependencies
-        if: github.ref != 'refs/heads/demo' # Only run npm ci if not on the 'demo' branch
+        if: github.ref != 'refs/heads/dev' # Only run npm ci if not on the 'dev' branch
         run: npm ci
 
       # Run npm test
       - name: Run tests
-        if: github.ref != 'refs/heads/demo' # Only run npm test if not on the 'demo' branch
+        if: github.ref != 'refs/heads/dev' # Only run npm test if not on the 'dev' branch
         run: npm test
 
-      # For other branches, including 'demo', skip npm ci and npm test
-      - name: Skip npm ci and npm test for demo branch
-        if: github.ref == 'refs/heads/demo'
-        run: echo "Skipping npm ci and npm test for the demo branch"
+      # For other branches, including 'dev', skip npm ci and npm test
+      - name: Skip npm ci and npm test for dev branch
+        if: github.ref == 'refs/heads/dev'
+        run: echo "Skipping npm ci and npm test for the dev branch"
 
       - run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
       - run: |
