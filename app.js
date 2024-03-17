@@ -3,6 +3,24 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const { connectToDatabase } = require('./config/db.js'); // Assuming db.js is in the same directory
+
+async function queryUsers() {
+  try {
+    const connectionObject = await connectToDatabase();
+
+    console.log('Executing query...');
+    const result = await connectionObject.connection.execute('SELECT * FROM users');
+    console.log(result.rows);
+
+    await connectionObject.close();
+  } catch (err) {
+    console.error('Error connecting or querying:', err);
+  }
+}
+
+queryUsers();
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
