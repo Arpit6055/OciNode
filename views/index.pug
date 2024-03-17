@@ -1,5 +1,55 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  .hero
+    .hero__image
+      img(src="/images/hero-background.jpg", alt="Hero background image")
+    .hero__content
+      h1.hero__title ACCESS DENIED!
+      //- p.hero__description Your website has been compromised. Data may be at risk.
+
+  .about-us
+    .container
+      h2.section-title We Are In Control Now.
+      p.section-description  This website is no longer under your authority. Your data is being scanned.  **DO NOT ATTEMPT TO RESIST.**
+
+  .services  
+    .container
+      h2.section-title What are your options?
+      .row
+        .col-md-4
+          .service-card(style="background-color: #ff9999")
+            // Remove this section to get rid of  "pay" option
+            i.fas.fa-file-alt 
+            h3.service-card__title Download the decryption key... (UNAVAILABLE)
+            p.service-card__description  The decryption key is currently unavailable.  **We have received strange signals from your webcam...**
+
+        .col-md-4
+          .service-card(style="background-color: #99ffff")
+            i.fas.fa-envelope 
+            h3.service-card__title Contact the new administration...
+            p.service-card__description  We may be willing to negotiate a resolution. Use the contact form below.
+
+        .col-md-4
+          .service-card(style="background-color: #ffff99")
+            i.fas.fa-hdd 
+            h3.service-card__title We are now scanning your hard drive for valuable information...
+            p.service-card__description  This may take a while.  **Strange noises may emanate from your computer during this process...**
+
+
+  .contact
+    .container
+      h2.section-title Send a message...
+      p.section-description  There is a small chance we may listen to your pleas...
+      form(action="#", method="POST")
+        .form-group
+          input.form-control(type="text", name="name", placeholder="Name (Required)")
+        .form-group
+          input.form-control(type="email", name="email", placeholder="Email (Required)")
+        .form-group
+          textarea.form-control(name="message", rows="3", placeholder="Enter your message here...")
+        button.btn.btn-primary Submit
+
+  .footer
+    .container
+      p.copyright &copy; 2024 New Management 
