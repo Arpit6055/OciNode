@@ -18,6 +18,9 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+    - name: Set TNS_ADMIN
+    - run: export TNS_ADMIN=/actions-runner/_work/instantclient_19_8/network/admin
+    - run: export LD_LIBRARY_PATH=/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
@@ -27,8 +30,7 @@ jobs:
     - run: npm i
     - run: touch .env
     - run:  echo "${{secrets.PROD_ENV}}" > .env
-    - run: export LD_LIBRARY_PATH="/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH"
-    - run: export TNS_ADMIN="/actions-runner/_work/instantclient_19_8/network/admin"
+    - run: export TNS_ADMIN=""
     - run: hostname -i
     - run: npm test
     - run:  npm start
