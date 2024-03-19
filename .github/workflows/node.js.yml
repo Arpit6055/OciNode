@@ -7,7 +7,7 @@ on:
       - dev
 
 jobs:
-  deploy:
+  build:
 
     runs-on: self-hosted
 
@@ -28,20 +28,28 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      # Cache npm dependencies
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
       # Create .env file and pipe secret into it
       - name: Create .env file and add secret
         run: |
           touch .env
           echo "${{ secrets.PROD_ENV }}" > .env
 
-      # Run npm ci
+      # Run npm ci if not on the 'dev' branch
       - name: Install dependencies
-        if: github.ref != 'refs/heads/dev' # Only run npm ci if not on the 'dev' branch
+        if: github.ref != 'refs/heads/dev'
         run: npm ci
 
-      # Run npm test
+      # Run npm test if not on the 'dev' branch
       - name: Run tests
-        if: github.ref != 'refs/heads/dev' # Only run npm test if not on the 'dev' branch
+        if: github.ref != 'refs/heads/dev'
         run: npm test
 
       # For other branches, including 'dev', skip npm ci and npm test
@@ -49,9 +57,17 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         run: echo "Skipping npm ci and npm test for the dev branch"
 
-      - run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
-      - run: |
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
+
+      # Remove previous container if running
+      - name: Stop previous container if running
+        run: |
           if [ "$(docker ps -q -f name=node-express-getting-started)" ]; then
               docker stop node-express-getting-started
           fi
-      - run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
+
+      # Run Docker container
+      - name: Run Docker container
+        run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
