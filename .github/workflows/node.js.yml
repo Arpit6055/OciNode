@@ -60,7 +60,7 @@ jobs:
       - name: Stop previous container if running
         run: |
           if [ "$(docker ps -q -f name=node-express-getting-started)" ]; then
-            docker rm -f node-express-getting-started
+            docker stop -t 2 node-express-getting-started
           fi
 
       # Run Docker container (unchanged)
