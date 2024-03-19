@@ -16,19 +16,9 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - name: Set up environment variables
-        run: |
-          export TNS_ADMIN=/actions-runner/_work/instantclient_19_8/network/admin
-          export LD_LIBRARY_PATH=/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH
-
       - uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      # Cache npm dependencies
+      # Use cache for npm dependencies
       - uses: actions/cache@v2
         with:
           path: ~/.npm
@@ -36,38 +26,51 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      # Create .env file and pipe secret into it
-      - name: Create .env file and add secret
+      # Combine environment variable setup
+      - name: Set up environment variables
         run: |
-          touch .env
+          export TNS_ADMIN=/actions-runner/_work/instantclient_19_8/network/admin
+          export LD_LIBRARY_PATH=/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH
           echo "${{ secrets.PROD_ENV }}" > .env
 
-      # Run npm ci if not on the 'dev' branch
-      - name: Install dependencies
+      # Use actions/cache for Docker layers
+      - uses: actions/cache@v2
+        with:
+          path: .dockerignore
+          key: ${{ runner.os }}-docker-cache-${{ hashFiles('.dockerignore DO.CKERFILE') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-cache-
+
+      # Use Node.js with cache
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Conditional execution based on branch (combined)
+      - name: Install dependencies (prod branches)
         if: github.ref != 'refs/heads/dev'
         run: npm ci
 
-      # Run npm test if not on the 'dev' branch
-      - name: Run tests
+      - name: Run tests (prod branches)
         if: github.ref != 'refs/heads/dev'
         run: npm test
 
-      # For other branches, including 'dev', skip npm ci and npm test
       - name: Skip npm ci and npm test for dev branch
         if: github.ref == 'refs/heads/dev'
         run: echo "Skipping npm ci and npm test for the dev branch"
 
-      # Build Docker image
+      # Build Docker image with cache
       - name: Build Docker image
-        run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
+        run: docker build --cache-from=node-express-getting-started:latest --pull --rm -t node-express-getting-started -f DOCKERFILE .
 
-      # Remove previous container if running
+      # Remove previous container (unchanged)
       - name: Stop previous container if running
         run: |
           if [ "$(docker ps -q -f name=node-express-getting-started)" ]; then
-              docker stop node-express-getting-started
+            docker stop node-express-getting-started
           fi
 
-      # Run Docker container
+      # Run Docker container (unchanged)
       - name: Run Docker container
         run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
