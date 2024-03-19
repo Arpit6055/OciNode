@@ -16,42 +16,53 @@ jobs:
         node-version: [16.x]
 
     steps:
+      - uses: actions/checkout@v3
+
+      # Use cache for npm dependencies
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      # Combine environment variable setup
       - name: Set up environment variables
         run: |
           export TNS_ADMIN=/actions-runner/_work/instantclient_19_8/network/admin
           export LD_LIBRARY_PATH=/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH
-
-      - uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      # Create .env file and pipe secret into it
-      - name: Create .env file and add secret
-        run: |
-          touch .env
           echo "${{ secrets.PROD_ENV }}" > .env
 
-      # Run npm ci
-      - name: Install dependencies
-        if: github.ref != 'refs/heads/dev' # Only run npm ci if not on the 'dev' branch
+      # Use Node.js with cache
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Conditional execution based on branch (combined)
+      - name: Install dependencies (prod branches)
+        if: github.ref != 'refs/heads/dev'
         run: npm ci
 
-      # Run npm test
-      - name: Run tests
-        if: github.ref != 'refs/heads/dev' # Only run npm test if not on the 'dev' branch
+      - name: Run tests (prod branches)
+        if: github.ref != 'refs/heads/dev'
         run: npm test
 
-      # For other branches, including 'dev', skip npm ci and npm test
       - name: Skip npm ci and npm test for dev branch
         if: github.ref == 'refs/heads/dev'
         run: echo "Skipping npm ci and npm test for the dev branch"
 
-      - run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
-      - run: |
+      # Build Docker image using multi-stage build
+      - name: Build Docker image
+        run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
+
+      # Remove previous container (unchanged)
+      - name: Stop previous container if running
+        run: |
           if [ "$(docker ps -q -f name=node-express-getting-started)" ]; then
-              docker stop node-express-getting-started
+            docker stop -t 2 node-express-getting-started
           fi
-      - run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
+
+      # Run Docker container (unchanged)
+      - name: Run Docker container
+        run: docker run --rm -d -p 3000:3000 --name node-express-getting-started node-express-getting-started:latest
