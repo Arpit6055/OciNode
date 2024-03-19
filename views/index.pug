@@ -1,55 +1,74 @@
 extends layout
 
 block content
-  .hero
-    .hero__image
-      img(src="/images/hero-background.jpg", alt="Hero background image")
-    .hero__content
-      h1.hero__title UNAUTHORIZED ACCESS REQUEST
-      //- p.hero__description Your website has been compromised. Data may be at risk.
-
-  .about-us
+  header.header.accent
     .container
-      h2.section-title We Are In Control Now.
-      p.section-description  This website is no longer under your authority. Your data is being scanned.  **DO NOT ATTEMPT TO RESIST.**
+      img.logo(src="/images/Oracle-Logo-PNG7.png", alt="Oracle Logo")
+      h1.title Oracle Cloud Infrastructure Overview
 
-  .services  
-    .container
-      h2.section-title What are your options?
-      .row
-        .col-md-4
-          .service-card(style="background-color: #ff9999")
-            // Remove this section to get rid of  "pay" option
-            i.fas.fa-file-alt 
-            h3.service-card__title Download the decryption key... (UNAVAILABLE)
-            p.service-card__description  The decryption key is currently unavailable.  **We have received strange signals from your webcam...**
+  main.main
+    section.intro.padded
+      h2.intro-title Welcome to Oracle Cloud Infrastructure (OCI)!
+      p.intro-text OCI empowers businesses with a comprehensive set of cloud services and solutions, enabling organizations to innovate, scale, and succeed in the digital era.
 
-        .col-md-4
-          .service-card(style="background-color: #99ffff")
-            i.fas.fa-envelope 
-            h3.service-card__title Contact the new administration...
-            p.service-card__description  We may be willing to negotiate a resolution. Use the contact form below.
+    section.features.light
+      h2.features-title Key Features
+      .feature-grid
+        .feature
+          i.fas.fa-server.feature-icon
+          h3.feature-title High Performance Computing
+          p.feature-text OCI offers high-performance compute instances powered by industry-leading processors and optimized for diverse workloads, ensuring rapid processing and superior performance.
 
-        .col-md-4
-          .service-card(style="background-color: #ffff99")
-            i.fas.fa-hdd 
-            h3.service-card__title We are now scanning your hard drive for valuable information...
-            p.service-card__description  This may take a while.  **Strange noises may emanate from your computer during this process...**
+        .feature
+          i.fas.fa-hdd.feature-icon
+          h3.feature-title Scalable Storage Options
+          p.feature-text With OCI, businesses can leverage scalable storage solutions, including object storage, block volumes, and file storage, to efficiently manage and store data of any size or type.
 
+        .feature
+          i.fas.fa-sitemap.feature-icon
+          h3.feature-title Advanced Networking
+          p.feature-text OCI provides advanced networking capabilities, such as Virtual Cloud Networks (VCN), load balancing, and VPN connectivity, enabling organizations to build secure, reliable, and flexible network infrastructures.
 
-  .contact
-    .container
-      h2.section-title Send a message...
-      p.section-description  There is a small chance we may listen to your pleas...
-      form(action="#", method="POST")
-        .form-group
-          input.form-control(type="text", name="name", placeholder="Name (Required)")
-        .form-group
-          input.form-control(type="email", name="email", placeholder="Email (Required)")
-        .form-group
-          textarea.form-control(name="message", rows="3", placeholder="Enter your message here...")
-        button.btn.btn-primary Submit
+        .feature
+          i.fas.fa-shield-alt.feature-icon
+          h3.feature-title Integrated Security
+          p.feature-text Security is paramount in OCI, with comprehensive security features including identity and access management (IAM), encryption, network security, and security monitoring, ensuring data protection and compliance with industry regulations.
 
-  .footer
-    .container
-      p.copyright &copy; 2024 New Management 
+    section.benefits.accent
+      h2.benefits-title Benefits of OCI
+      .benefit-grid
+        .benefit
+          i.fas.fa-expand.benefit-icon
+          h3.benefit-title Scalability
+          p.benefit-text OCI offers elastic scalability, allowing businesses to easily scale resources up or down based on demand, ensuring optimal performance and cost-efficiency.
+
+        .benefit
+          i.fas.fa-umbrella.benefit-icon
+          h3.benefit-title Reliability
+          p.benefit-text With a global network of data centers and built-in redundancy, OCI ensures high availability and reliability, minimizing downtime and ensuring uninterrupted business operations.
+
+        .benefit
+          i.fas.fa-cogs.benefit-icon
+          h3.benefit-title Flexibility
+          p.benefit-text OCI provides a flexible and customizable platform, allowing businesses to deploy and manage diverse workloads, applications, and environments, from development and testing to production.
+
+        .benefit
+          i.fas.fa-dollar-sign.benefit-icon
+          h3.benefit-title Cost-Efficiency
+          p.benefit-text OCI offers competitive pricing models, pay-as-you-go billing, and resource optimization tools, enabling businesses to optimize costs and maximize ROI without compromising performance or quality.
+
+    section.resources
+      h2.resources-title Additional Resources
+      ul.resource-list
+        li
+          i.fas.fa-external-link-alt.resource-icon
+          a(href="https://www.oracle.com/cloud/") Oracle Cloud Website
+        li
+          i.fas.fa-book.resource-icon
+          a(href="https://docs.oracle.com/en/cloud/") OCI Documentation
+        li
+          i.fas.fa-newspaper.resource-icon
+          a(href="https://blogs.oracle.com/cloud-infrastructure/") OCI Blog
+
+    footer.footer
+      p &copy; 2024 Oracle Corporation. All rights reserved.
