@@ -33,14 +33,6 @@ jobs:
           export LD_LIBRARY_PATH=/actions-runner/_work/instantclient_19_8:$LD_LIBRARY_PATH
           echo "${{ secrets.PROD_ENV }}" > .env
 
-      # Use actions/cache for Docker layers
-      - uses: actions/cache@v2
-        with:
-          path: .dockerignore
-          key: ${{ runner.os }}-docker-cache-${{ hashFiles('.dockerignore DO.CKERFILE') }}
-          restore-keys: |
-            ${{ runner.os }}-docker-cache-
-
       # Use Node.js with cache
       - uses: actions/setup-node@v3
         with:
@@ -60,9 +52,9 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         run: echo "Skipping npm ci and npm test for the dev branch"
 
-      # Build Docker image with cache
+      # Build Docker image using multi-stage build
       - name: Build Docker image
-        run: docker build --cache-from=node-express-getting-started:latest --pull --rm -t node-express-getting-started -f DOCKERFILE .
+        run: docker build --pull --rm -t node-express-getting-started -f DOCKERFILE .
 
       # Remove previous container (unchanged)
       - name: Stop previous container if running
